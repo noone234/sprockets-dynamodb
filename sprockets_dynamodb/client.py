@@ -13,6 +13,7 @@ import ssl
 import time
 
 from tornado import concurrent, gen, httpclient, ioloop
+from tornado import version_info as tornado_version_info
 import tornado_aws
 from tornado_aws import exceptions as aws_exceptions
 
@@ -833,7 +834,10 @@ class Client(object):
         :rtype: tornado.concurrent.Future
 
         """
-        future = concurrent.TracebackFuture()
+        if tornado_version_info[0] <= 4:
+            future = concurrent.TracebackFuture()
+        else:
+            future = concurrent.Future()
         start = time.time()
 
         def handle_response(request):
